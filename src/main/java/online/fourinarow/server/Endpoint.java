@@ -17,14 +17,14 @@ import java.util.Map;
 @RestController
 public class Endpoint {
 
-    @CrossOrigin
-    @GetMapping(value = "/minimax/{depth}/{width}/{height}/{data}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/move/{width}/{height}/{data}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> minimax(
-            @PathVariable int depth,
             @PathVariable int width,
             @PathVariable int height,
             @PathVariable String data
     ) {
+        int depth = 13;  // suitable for current server, will be dynamic
+
         Board board = new Board(width + "|" + height + "|" + data);
         Tile tile = board.getTurnCount() % 2 == 0 ? Tile.X_TILE : Tile.O_TILE;
 
