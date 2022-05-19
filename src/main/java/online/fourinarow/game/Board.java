@@ -1,8 +1,6 @@
 package online.fourinarow.game;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Board {
 
@@ -83,34 +81,27 @@ public class Board {
 
     // check if a column is full
     public boolean isColumnFull(int columnIdx) {
-        Tile[] column = state[columnIdx];
-        for (Tile tile : column) {
-            if (tile == Tile.EMPTY) return false;
-        }
-
-        return true;
+        // only check top of column due to gravity mechanic
+        return state[columnIdx][0] != Tile.EMPTY;
     }
 
     // check if the board is full
     public boolean isBoardFull() {
         for (int columnIdx = 0; columnIdx < width; columnIdx++) {
-            if (!isColumnFull(columnIdx)) return false;
+            if (state[columnIdx][0] == Tile.EMPTY) return false;
         }
 
         return true;
     }
 
-    // create an identical copy of this board
+    // create an identical deep copy of this board
     public Board cloneBoard() {
         Tile[][] clonedArray = new Tile[this.width][this.height];
         for (int column = 0; column < this.width; column++) {
-            /* for (int row = 0; row < this.height; row++) {
-                   clonedArray[column][row] = this.state[column][row];
-               } */
-            // this is the code above, just more native so it's faster
+            // copy each column in one native call
             System.arraycopy(this.state[column], 0, clonedArray[column], 0, this.height);
         }
-        // System.arraycopy(this.state, 0, clonedArray, 0, this.width);
+
         return new Board(this.width, this.height, clonedArray);
     }
 
@@ -130,7 +121,7 @@ public class Board {
 
     // easy way of storing to file
     public String toString() {
-        // width and height might be double digit so can't hardcode their length
+        // width and height might be double-digit so can't hardcode their length
         String header = width + "|" + height + "|";
         char[] boardString = new char[this.width * this.height];
         int i = 0;
@@ -151,7 +142,7 @@ public class Board {
         for (int y = 0; y < height; y++) {
             out.append("| ");  // left edge of the board
             for (int x = 0; x < width; x++) {
-                out.append(state[x][y].toString()).append(" ");  // add the tile representation
+                out.append(state[x][y].toChar()).append(" ");  // add the tile representation
             }
             out.append("|\n"); // right edge of the board
         }
@@ -159,28 +150,6 @@ public class Board {
         for (int i = 0; i < (width * 2) + 3; i++) out.append("-");  // bottom of the board
 
         return out.toString();
-    }
-
-    // create a header for the board for the PyTorch dataloader
-    public String getCSVHeader() {
-        List<String> data = new ArrayList<>();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                data.add("tile_" + x + "_" + y);
-            }
-        }
-        return String.join(",", data);
-    }
-
-    // create a representation of the board for the PyTorch dataloader
-    public String getCSV() {
-        List<String> data = new ArrayList<>();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                data.add(Float.toString((float)this.state[x][y].getValue()));
-            }
-        }
-        return String.join(",", data);
     }
 
     public Tile[][] getState() {
