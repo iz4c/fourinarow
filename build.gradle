@@ -5,6 +5,7 @@ plugins {
 }
 
 group = 'online.fourinarow'
+archivesBaseName = 'fourinarow'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
